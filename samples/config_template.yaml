@@ -1,0 +1,68 @@
+#
+# Copyright 2022-2024 Beijing Volcano Engine Technology Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+###################配置文件模版，用于解释说明各配置项，实际配置项请至config.yaml文件填写###################
+
+#1.设备基本信息配置，用于设备初始化；
+# 目前支持两种初始化方式：一种是直接调用arenal.CreateDeviceWithConfig方法，直接在此方法内部传递DeviceOption即可对设备进行初始化。
+# 另一种是yaml文件配置方式，使用arenal.InitOptionWithConfigFile方法，传递yaml文件所在路径即可生成对应的DeviceOption，再对设备进行初始化。
+# 前者较为繁琐复杂，且不易维护，不推荐使用；推荐后者yaml文件配置方式，此时需要填写下面的设备基本信息配置项。
+instance_id: xxxxxxxxx
+device_name: xxx  #必填
+product_key: xxxxxxxxx #必填
+product_secret: xxxxxxxxx  #可选，若设备认证方式为一型一密，则此项必填
+device_secret: xxxxxxxxx #必填
+verify_mode: DeviceSecret #必填，设备认证方式，DeviceSecret为一机一密，DynamicRegistered为一型一密预注册，DynamicUnRegistered为一型一密免预注册
+cloud_http_host: xx.xx.xxx.com # 云端API接入地址，给动态注册和文件上传使用
+mqtt_host: xx.xx.xx.xxx # mqtt接入地址，可在实例详情页查看
+mqtt_port: 1883 # mqtt接入端口，可不填，默认443，如果不开启加密，需要指定裸mqtt的端口
+is_gateway: false   # 必填，是否为网关设备
+region: global-boe # 必填，区域选择，目前支持两种:global-boe为BOE环境，global-offline为线下测试环境
+file_path:  #可选，默认的文件存放路径，包括安装包下载文件，日志文件以及OTA升级历史任务文件等，不填则默认当前工作路径
+ota_history_job_reload_mode: #可选，设备重启后是否重入未完成（安装完成属于完成态）的历史任务，默认忽略Ignore，HistoryJobPriority：重启后有冲突的新任务时历史任务优先，NewJobCoverage：重启后有冲突的新任务时新任务覆盖。
+webshell_executor:  #可选，Webshell执行器，默认为sh，如果系统不支持sh，请配置合适的执行器，比如bash,zsh 等
+keep_alive: 180 #可选，mqtt连接保活时间，单位s，超过keepalive*1.5时间未收到消息认为客户端掉线。默认3分钟
+
+#2.设备OTA模块配置，支持多模块，用于设备OTA升级；若需要OTA升级功能，此项必填。
+ota_module:
+- module_key: default #设备待升级OTA模块，不填则默认default，若需要为设备自定义OTA模块升级，则必填
+  version: gateway1 #设备该模块的当前版本号，必填，升级完成后自动更新为升级后版本号
+  file_name: #当前版本对应的安装包，可不填，升级完成后自动更新为此次升级的安装包
+  last_version: #设备该模块的上一版本号，用于版本回滚，可不填；升级完成后自动更新为升级前版本号
+  last_file_name: #上一版本对应的安装包，用于版本回滚，可不填；升级完成后自动更新为升级前版本对应安装包
+
+#3.子设备OTA模块配置，支持多模块，用于网关代子设备进行OTA升级；若需要子设备OTA升级功能，此项必填。
+# 其中module_key为子设备productKey|子设备deviceName|子设备待升级OTA模块，此项必填；其余各项的子设备OTA模块配置意义与上述设备OTA模块配置一致
+sub_device_ota_module:
+- module_key: xxxxxxxxx|device-1|default
+  version: sub-v1
+  file_name:
+  last_version:
+  last_file_name:
+
+#4.用户自定义Topic配置，用于存储用户自定义Topic以及自定义Qos信息；目前该功能暂不支持，可不填。
+user_define_topic:
+  #4.1 string list,存放Qos为0的Topic
+  qos_0:
+  - sys/+/+/topic/demo/qos0
+  #4.2 string list,存放Qos为1的Topic
+  qos_1:
+  - sys/+/+/topic/demo/qos1
+
+#5.设备本地日志上报配置，switch配置是否上报，lowest_level配置上报的最低等级：fatal>error>warn>info>debug
+log_report_config:
+  switch: true
+  lowest_level: debug
