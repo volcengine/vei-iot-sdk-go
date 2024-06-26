@@ -194,6 +194,11 @@ func (d *Device) initMQTT() bool {
 	} else {
 		opts.SetKeepAlive(defaultKeepAlive * time.Second)
 	}
+	if d.MaxReconnectInterval != nil && *d.MaxReconnectInterval > 0 {
+		opts.SetMaxReconnectInterval(time.Duration(*d.MaxReconnectInterval) * time.Second)
+	} else {
+		opts.SetMaxReconnectInterval(defaultMaxReconnectInterval * time.Second)
+	}
 	opts.SetCleanSession(false)
 	opts.SetWriteTimeout(3 * time.Second)
 	opts.SetStore(paho.NewFileStore(path.Join(d.FilePath, "qos1")))
