@@ -82,6 +82,9 @@ type DeviceOption struct {
 	// mqtt连接保活时间，单位s，超过keepalive*1.5时间未收到消息认为客户端掉线。默认3分钟
 	// Required:false
 	KeepAlive *int64
+	// 尝试重连的最大间隔时间，单位s。默认10秒
+	// Required:false
+	MaxReconnectInterval *int64
 	// 是否开启mqtt debug日志，定位问题使用，不要在生产环境中默认打开
 	// Required: false
 	MQTTDebugLogEnabled bool
@@ -206,6 +209,11 @@ func (o *DeviceOption) WithAllowMultiple(allowMultiple bool) *DeviceOption {
 
 func (o *DeviceOption) WithKeepAlive(keepAlive int64) *DeviceOption {
 	o.KeepAlive = &keepAlive
+	return o
+}
+
+func (o *DeviceOption) WithMaxReconnectInterval(maxReconnectInterval int64) *DeviceOption {
+	o.MaxReconnectInterval = &maxReconnectInterval
 	return o
 }
 

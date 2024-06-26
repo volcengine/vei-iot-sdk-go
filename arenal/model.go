@@ -27,19 +27,20 @@ import (
 )
 
 const (
-	otaJobHistoryPath         = "ota_job_history.json"
-	md5CodeStorageFile        = "check.txt"
-	OTADefaultModule          = "default"
-	tokenHeader               = "arenal-token"
-	tmpSuffix                 = "tmp"
-	executingJobPath          = "executing_job.json"
-	executingJobMD5File       = "executing_job.md5"
-	ServiceIDKey              = "ServiceID"
-	md5Key                    = "MD5"
-	fileSourceKey             = "Source"
-	defaultKeepAlive          = 180
-	subscriptionRetryIntv     = time.Second
-	subscriptionMaxRetryCount = 100
+	otaJobHistoryPath           = "ota_job_history.json"
+	md5CodeStorageFile          = "check.txt"
+	OTADefaultModule            = "default"
+	tokenHeader                 = "arenal-token"
+	tmpSuffix                   = "tmp"
+	executingJobPath            = "executing_job.json"
+	executingJobMD5File         = "executing_job.md5"
+	ServiceIDKey                = "ServiceID"
+	md5Key                      = "MD5"
+	fileSourceKey               = "Source"
+	defaultKeepAlive            = 180
+	defaultMaxReconnectInterval = 10
+	subscriptionRetryIntv       = time.Second
+	subscriptionMaxRetryCount   = 100
 )
 
 var ConfigFilePath = "config.yaml"
