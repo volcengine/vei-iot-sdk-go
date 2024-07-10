@@ -423,6 +423,16 @@ func (d *Device) IsConnected() bool {
 	return d.client.IsConnected()
 }
 
+// IsConnectionOpen 判断设备是否与MQTT broker存在活动连接，即不为断开或重连状态
+// 存在活动连接返回true，否则返回false
+func (d *Device) IsConnectionOpen() bool {
+	if d.client == nil {
+		return false
+	}
+
+	return d.client.IsConnectionOpen()
+}
+
 // SetPropertySetHandler 配置处理属性设置消息的Handler
 // 传递 PropertySetHandler 根据参数中的身份标识区分设备自身或子设备
 func (d *Device) SetPropertySetHandler(handler PropertySetHandler) {
