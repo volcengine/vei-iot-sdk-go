@@ -23,13 +23,46 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	MQTTLogFileMaxSize    = 500
+	MQTTLogFileMaxBackups = 3
+	MQTTLogFileMaxAge     = 28
+	MQTTLogFileCompress   = true
+)
+
 type MQTTDebugLogConfig struct {
-	LogType                  // 默认输出到console，可选值为console/file
-	LogFileName       string // 日志文件名
-	LogFileMaxSize    int    // 每个日志文件的最大大小（MB）
-	LogFileMaxBackups int    // 保留的旧日志文件的最大数量
-	LogFileMaxAge     int    // 保留的旧日志文件的最大天数
-	LogFileCompress   bool   // 是否压缩旧日志文件
+	LogType                   // 默认输出到console，可选值为console/file
+	LogFileName       *string // 日志文件名
+	LogFileMaxSize    *int    // 每个日志文件的最大大小（MB）
+	LogFileMaxBackups *int    // 保留的旧日志文件的最大数量
+	LogFileMaxAge     *int    // 保留的旧日志文件的最大天数
+	LogFileCompress   *bool   // 是否压缩旧日志文件
+}
+
+func (c *MQTTDebugLogConfig) setDefaults() {
+	if c.LogType == "" {
+		c.LogType = MQTTLogTypeConsole
+	}
+	if c.LogFileName == nil {
+		c.LogFileName = new(string)
+		*c.LogFileName = "arenal.log"
+	}
+	if c.LogFileMaxSize == nil {
+		c.LogFileMaxSize = new(int)
+		*c.LogFileMaxSize = MQTTLogFileMaxSize
+	}
+	if c.LogFileMaxBackups == nil {
+		c.LogFileMaxBackups = new(int)
+		*c.LogFileMaxBackups = MQTTLogFileMaxBackups
+	}
+	if c.LogFileMaxAge == nil {
+		c.LogFileMaxAge = new(int)
+		*c.LogFileMaxAge = MQTTLogFileMaxAge
+	}
+	if c.LogFileCompress == nil {
+		c.LogFileCompress = new(bool)
+		*c.LogFileCompress = MQTTLogFileCompress
+	}
 }
 
 type ConsoleLogger struct {
@@ -61,9 +94,9 @@ func NewFileLogger(level logrus.Level, output io.Writer) *FileLogger {
 }
 
 func (l *FileLogger) Println(v ...interface{}) {
-	l.logger.Log(l.level, v)
+	l.logger.Log(l.level, v...)
 }
 
 func (l *FileLogger) Printf(format string, v ...interface{}) {
-	l.logger.Logf(l.level, format, v)
+	l.logger.Logf(l.level, format, v...)
 }

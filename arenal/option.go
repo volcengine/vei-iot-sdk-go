@@ -233,6 +233,7 @@ func (o *DeviceOption) WithMQTTDebugLogEnabled(enabled bool) *DeviceOption {
 }
 
 func (o *DeviceOption) WithMQTTDebugLogConfig(mqttDebugLogConfig MQTTDebugLogConfig) *DeviceOption {
+	mqttDebugLogConfig.setDefaults()
 	o.MQTTDebugLogConfig = mqttDebugLogConfig
 	return o
 }

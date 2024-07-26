@@ -390,12 +390,13 @@ func (d *Device) setMQTTDebugLogger() {
 	}
 	switch d.MQTTDebugLogConfig.LogType {
 	case MQTTLogTypeFile:
+		d.MQTTDebugLogConfig.setDefaults()
 		logFile := &lumberjack.Logger{
-			Filename:   d.MQTTDebugLogConfig.LogFileName, // 日志文件名
-			MaxSize:    500,                              // 每个日志文件的最大大小（MB）
-			MaxBackups: 3,                                // 保留的旧日志文件的最大数量
-			MaxAge:     28,                               // 保留的旧日志文件的最大天数
-			Compress:   true,                             // 是否压缩旧日志文件
+			Filename:   *d.MQTTDebugLogConfig.LogFileName,
+			MaxSize:    *d.MQTTDebugLogConfig.LogFileMaxSize,
+			MaxBackups: *d.MQTTDebugLogConfig.LogFileMaxBackups,
+			MaxAge:     *d.MQTTDebugLogConfig.LogFileMaxAge,
+			Compress:   *d.MQTTDebugLogConfig.LogFileCompress,
 		}
 		paho.DEBUG = NewFileLogger(logrus.DebugLevel, logFile)
 		paho.CRITICAL = NewFileLogger(logrus.FatalLevel, logFile)
