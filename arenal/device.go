@@ -24,9 +24,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	paho "github.com/eclipse/paho.mqtt.golang"
-	"github.com/volcengine/vei-iot-sdk-go/arenal/common/webshell/bashexec"
-	"github.com/volcengine/vei-iot-sdk-go/arenal/common/webshell/webtty"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -35,6 +32,13 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	paho "github.com/eclipse/paho.mqtt.golang"
+	"github.com/sirupsen/logrus"
+	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/volcengine/vei-iot-sdk-go/arenal/common/webshell/bashexec"
+	"github.com/volcengine/vei-iot-sdk-go/arenal/common/webshell/webtty"
 )
 
 func init() {
@@ -384,10 +388,25 @@ func (d *Device) setMQTTDebugLogger() {
 	if !d.MQTTDebugLogEnabled {
 		return
 	}
-	paho.DEBUG = NewConsoleLogger("[Debug] ")
-	paho.CRITICAL = NewConsoleLogger("[CRITICAL] ")
-	paho.WARN = NewConsoleLogger("[WARN] ")
-	paho.ERROR = NewConsoleLogger("[Error] ")
+	switch d.MQTTDebugLogConfig.LogType {
+	case MQTTLogTypeFile:
+		logFile := &lumberjack.Logger{
+			Filename:   d.MQTTDebugLogConfig.LogFileName, // 日志文件名
+			MaxSize:    500,                              // 每个日志文件的最大大小（MB）
+			MaxBackups: 3,                                // 保留的旧日志文件的最大数量
+			MaxAge:     28,                               // 保留的旧日志文件的最大天数
+			Compress:   true,                             // 是否压缩旧日志文件
+		}
+		paho.DEBUG = NewFileLogger(logrus.DebugLevel, logFile)
+		paho.CRITICAL = NewFileLogger(logrus.FatalLevel, logFile)
+		paho.WARN = NewFileLogger(logrus.WarnLevel, logFile)
+		paho.ERROR = NewFileLogger(logrus.ErrorLevel, logFile)
+	default:
+		paho.DEBUG = NewConsoleLogger("[Debug] ")
+		paho.CRITICAL = NewConsoleLogger("[CRITICAL] ")
+		paho.WARN = NewConsoleLogger("[WARN] ")
+		paho.ERROR = NewConsoleLogger("[Error] ")
+	}
 }
 
 func (d *Device) SetOnConnectHandler(handler OnConnectHandler) {

@@ -16,7 +16,21 @@
 
 package arenal
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+
+	"github.com/sirupsen/logrus"
+)
+
+type MQTTDebugLogConfig struct {
+	LogType                  // 默认输出到console，可选值为console/file
+	LogFileName       string // 日志文件名
+	LogFileMaxSize    int    // 每个日志文件的最大大小（MB）
+	LogFileMaxBackups int    // 保留的旧日志文件的最大数量
+	LogFileMaxAge     int    // 保留的旧日志文件的最大天数
+	LogFileCompress   bool   // 是否压缩旧日志文件
+}
 
 type ConsoleLogger struct {
 	Prefix string
@@ -32,4 +46,24 @@ func (l *ConsoleLogger) Println(v ...interface{}) {
 
 func (l *ConsoleLogger) Printf(format string, v ...interface{}) {
 	fmt.Printf(l.Prefix+format, v)
+}
+
+type FileLogger struct {
+	level  logrus.Level
+	logger *logrus.Logger
+}
+
+func NewFileLogger(level logrus.Level, output io.Writer) *FileLogger {
+	logger := logrus.New()
+	logger.SetOutput(output)
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	return &FileLogger{level: level, logger: logger}
+}
+
+func (l *FileLogger) Println(v ...interface{}) {
+	l.logger.Log(l.level, v)
+}
+
+func (l *FileLogger) Printf(format string, v ...interface{}) {
+	l.logger.Logf(l.level, format, v)
 }

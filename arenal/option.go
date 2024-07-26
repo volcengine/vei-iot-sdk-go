@@ -88,6 +88,9 @@ type DeviceOption struct {
 	// 是否开启mqtt debug日志，定位问题使用，不要在生产环境中默认打开
 	// Required: false
 	MQTTDebugLogEnabled bool
+	// mqtt debug日志配置
+	// Required: false
+	MQTTDebugLogConfig MQTTDebugLogConfig
 	// 断点重传property时的时间间隔，默认1s
 	// Required:false
 	UploadHistoryPropertyIntv *time.Duration
@@ -101,6 +104,13 @@ type AccessType string
 const (
 	DeviceAccessTypeHTTP AccessType = "http"
 	DeviceAccessTypeMQTT AccessType = "mqtt"
+)
+
+type LogType string
+
+const (
+	MQTTLogTypeConsole LogType = "console"
+	MQTTLogTypeFile    LogType = "file"
 )
 
 func NewDeviceOption() *DeviceOption {
@@ -221,6 +231,12 @@ func (o *DeviceOption) WithMQTTDebugLogEnabled(enabled bool) *DeviceOption {
 	o.MQTTDebugLogEnabled = enabled
 	return o
 }
+
+func (o *DeviceOption) WithMQTTDebugLogConfig(mqttDebugLogConfig MQTTDebugLogConfig) *DeviceOption {
+	o.MQTTDebugLogConfig = mqttDebugLogConfig
+	return o
+}
+
 func (o *DeviceOption) WithUploadHistoryPropertyIntv(uploadHistoryPropertyIntv time.Duration) *DeviceOption {
 	o.UploadHistoryPropertyIntv = &uploadHistoryPropertyIntv
 	return o

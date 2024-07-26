@@ -19,11 +19,12 @@ package arenal
 import (
 	"encoding/json"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 var logLocalStoreChan chan Log
