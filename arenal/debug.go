@@ -90,6 +90,7 @@ func NewFileLogger(level logrus.Level, output io.Writer) *FileLogger {
 	logger := logrus.New()
 	logger.SetOutput(output)
 	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(level)
 	return &FileLogger{level: level, logger: logger}
 }
 
